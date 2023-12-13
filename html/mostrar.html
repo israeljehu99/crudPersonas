@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilo.css">
+    <style>
+        table {
+            width: 50vw;
+            height: 40vh;
+            display: grid;
+            grid-template-columns: 1fr;
+            border: 1px solid red;
+            overflow: scroll;
+        }
+
+        table::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        section>div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        tr {
+            display: flex;
+            background-color: antiquewhite;
+        }
+
+        tr>td {
+            flex-grow: 1;
+            padding: 2%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="contenido">
+
+    </header>
+    <section>
+        <div>
+            <h1>MOSTRAR</h1>
+            <table id="tablita">
+                <tr>
+                    <td>DNI</td>
+                    <td>Nombre</td>
+                    <td>Apellido</td>
+                </tr>
+                <script>
+                    let tablita = document.getElementById('tablita');
+                    let fragmento = document.createDocumentFragment();
+
+                    let obj = {};
+                    let t = new XMLHttpRequest();
+                    t.open('GET', `/mostrarTodos`, true);
+                    t.setRequestHeader('Content-Type', 'application/json');
+                    t.addEventListener('readystatechange', () => {
+                        if (t.status >= 200 && t.status < 300 && t.readyState === 4) {
+                            obj = JSON.parse(t.responseText);
+                            obj.forEach((uno) => {
+                                let tr = document.createElement('tr');
+                                let td1 = document.createElement('td');
+                                let td2 = document.createElement('td');
+                                let td3 = document.createElement('td');
+                                td1.textContent = uno.dni;
+                                td2.textContent = uno.nombre;
+                                td3.textContent = uno.apellido;
+                                tr.appendChild(td1);
+                                tr.appendChild(td2);
+                                tr.appendChild(td3);
+                                fragmento.appendChild(tr);
+                            });
+                            tablita.appendChild(fragmento);
+                        }
+                    });
+                    t.send();
+
+
+                </script>
+            </table>
+        </div>
+
+        <h3 id="respuesta"></h3>
+
+        <script src="js/importar.js">
+
+        </script>
+
+</body>
+
+</html>

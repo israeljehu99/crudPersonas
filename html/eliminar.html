@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilo.css">
+    <style>
+        .muestra {
+            position: absolute;
+            background-color: black;
+            width: 100vw;
+            height: 100vh;
+            opacity: 1;
+        }
+
+        .muestra>p {
+            position: absolute;
+            top: 3%;
+            right: 6%;
+            color: white;
+            font-size: 25px;
+            background-color: rgb(0, 0, 0);
+            padding: 4px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .cuadrito {
+            width: 40%;
+            height: 40%;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="contenido">
+
+    </header>
+    <section>
+        <form>
+            <div class="grupo">
+                <h1>ELIMINAR</h1>
+            </div>
+            <div class="grupo">
+                <label for="dni">dni :</label>
+                <input type="text" autocomplete="true" placeholder="Ingrese DNI" id="dni">
+            </div>
+            <div class="grupo">
+                <input type="button" value="Aceptar" id="aceptar">
+            </div>
+        </form>
+    </section>
+
+    <h3 id="respuesta"></h3>
+
+    <section class="muestra">
+        <p id="cerrar">X</p>
+        <div class="cuadrito">
+            <h3>¿DESEAS ELIMINARLO?</h3>
+            <h1 id="nombre">Israel jehu</h1>
+            <button type="button" id="guardar">aceptar</button>
+        </div>
+    </section>
+
+    <script src="js/importar.js">
+
+    </script>
+
+    <script>
+        let cerrar = document.getElementById('cerrar');
+        let nombre = document.getElementById('nombre');
+        let ventana = document.querySelector('.muestra');
+
+        let aceptar = document.querySelector('#aceptar');
+        let aceptarDos = document.querySelector('#guardar');
+
+        cerrar.addEventListener('click', function () {
+            ventana.style.setProperty('display', 'none');
+        });
+
+        let y;
+        let obj = {};
+
+        aceptar.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            let t = new XMLHttpRequest();
+            y = document.getElementById('dni').value;
+            ventana.style.setProperty('display', 'flex');
+            t.open('GET', `/mostrarUno/${y}`, true);
+            t.setRequestHeader('Content-Type', 'application/json');
+            t.addEventListener('readystatechange', () => {
+                if (t.status >= 200 && t.status < 300 && t.readyState === 4) {
+                    obj = JSON.parse(t.responseText);
+                    if (obj[0]) {
+                        nombre.textContent = obj[0].nombre + " " + obj[0].apellido;
+                    } else {
+                        nombre.textContent = "no se encontraron datos";
+                    }
+
+                }
+            });
+            t.send();
+        });
+
+
+
+
+        aceptarDos.addEventListener('click', function (e) {
+            let t2 = new XMLHttpRequest();
+            ventana.style.setProperty('display', 'none');
+            t2.open('DELETE', `/eli/${obj[0].dni}`, true);
+            t2.setRequestHeader('Content-Type', 'application/json');
+            t2.addEventListener('readystatechange', () => {
+                if (t2.status >= 200 && t2.status < 300 && t2.readyState === 4) {
+                    let r = JSON.parse(t2.responseText);
+                    if (r[0]) {
+                        // Mostrar o procesar la respuesta del servidor
+                        console.log(r[0].respuesta);
+                    } else {
+                        // El servidor no devuelve datos en la respuesta DELETE
+                        console.log('Solicitud DELETE exitosa');
+                    }
+                }
+            });
+            t2.send();
+        });
+
+
+    </script>
+
+</body>
+
+</html>

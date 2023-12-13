@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+    <header id="contenido">
+
+    </header>
+    <section>
+        <form action="" id="aceptar">
+            <div class="grupo">
+                <h1>MODIFICAR</h1>
+            </div>
+            <div class="grupo">
+                <label for="dni">dni :</label>
+                <input type="text" autocomplete="true" placeholder="Ingrese DNI" id="dni">
+            </div>
+            <div class="grupo">
+                <label for="nombre">nombre :</label>
+                <input type="text" autocomplete="true" placeholder="Ingrese Nombre" id="nombre">
+            </div>
+            <div class="grupo">
+                <label for="apellido">apellido :</label>
+                <input type="text" autocomplete="true" placeholder="Ingrese apellido " id="apellido">
+            </div>
+            <div class="grupo">
+                <input type="button" value="Cancelar" id="cancelar">
+                <input type="submit" value="Aceptar">
+            </div>
+        </form>
+    </section>
+    <h3 id="respuesta"></h3>
+
+    <script src="js/importar.js">
+
+    </script>
+    <script>
+        let formulario = document.getElementById('aceptar');
+
+        let respuesta = document.getElementById('respuesta');
+
+        formulario.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let xml = new XMLHttpRequest();
+            let dni = document.getElementById('dni').value, nombre = document.getElementById('nombre').value, apellido = document.getElementById('apellido').value;
+            xml.open('PUT', `/modi/${dni}`, true);
+            xml.setRequestHeader('Content-Type', 'application/json');
+            let resultado;
+            
+            let obj = {
+                nombre,
+                apellido
+            };
+            xml.addEventListener('readystatechange', (e) => {
+                if (xml.status >= 200 && xml.status < 400 && xml.readyState === 4) {
+                    resultado = JSON.parse(xml.responseText);
+                    respuesta.innerHTML = resultado.respuesta;
+                } else {
+                    if (xml.status >= 400) {
+                        resultado = JSON.parse(xml.responseText);
+                        respuesta.innerHTML = resultado.error;
+                    }
+                }
+            });
+            xml.send(JSON.stringify(obj));
+        });
+    </script>
+</body>
+
+</html>
